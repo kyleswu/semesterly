@@ -39,15 +39,15 @@ class Student(models.Model):
     JUNIOR = 'JR'
     SENIOR = 'SR'
     class_year = models.IntegerField(blank=True, null=True)
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, on_delete=models.deletion.CASCADE)
     img_url = models.CharField(max_length=300, default=-1)
     friends = models.ManyToManyField("self", blank=True)
     fbook_uid = models.CharField(max_length=255, default='')
     major = models.CharField(max_length=255, default='')
-    social_courses = models.NullBooleanField(null=True)
-    social_offerings = models.NullBooleanField(null=True)
-    social_all = models.NullBooleanField(null=True)
-    emails_enabled = models.NullBooleanField(null=True, default=True)
+    social_courses = models.BooleanField(null=True)
+    social_offerings = models.BooleanField(null=True)
+    social_all = models.BooleanField(null=True)
+    emails_enabled = models.BooleanField(null=True, default=True)
     integrations = models.ManyToManyField(timetable_models.Integration,
                                           blank=True)
     time_created = models.DateTimeField(auto_now_add=True)
@@ -55,10 +55,10 @@ class Student(models.Model):
     time_accepted_tos = models.DateTimeField(null=True)
     hopid = models.CharField(max_length=10, null=True, default='')
     jhed = models.CharField(max_length=10, null=True, default='')
-    pre_health = models.NullBooleanField(null=True, default=False)
+    pre_health = models.BooleanField(null=True, default=False)
     first_name = models.CharField(max_length=255, default='', null=True)
     last_name = models.CharField(max_length=255, default='', null=True)
-    disabilities = models.NullBooleanField(null=True, default=False)
+    disabilities = models.BooleanField(null=True, default=False)
 
     def __str__(self):
         return "{0}".format(self.jhed)
@@ -114,7 +114,7 @@ class Reaction(models.Model):
         ('HARD', 'HARD'),
         ('EASY', 'EASY'),
         ('INTERESTING', 'INTERESTING'))
-    student = models.ForeignKey('student.Student')
+    student = models.ForeignKey('student.Student', on_delete=models.deletion.CASCADE)
     course = models.ManyToManyField(timetable_models.Course)
     title = models.CharField(max_length=50, choices=REACTION_CHOICES)
     time_created = models.DateTimeField(auto_now_add=True)
@@ -140,7 +140,7 @@ class PersonalTimetable(timetable_models.Timetable):
         Courses and Sections that it represents.
     """
     name = models.CharField(max_length=100)
-    student = models.ForeignKey(Student)
+    student = models.ForeignKey(Student, on_delete=models.deletion.CASCADE)
     last_updated = models.DateTimeField(auto_now=True)
     # TODO: change to foreign key from personal event -> personal timetable
     events = models.ManyToManyField(PersonalEvent)
@@ -155,7 +155,7 @@ class RegistrationToken(models.Model):
     auth = models.TextField(default='')
     p256dh = models.TextField(default='')
     endpoint = models.TextField(default='')
-    student = models.ForeignKey(Student, null=True, default=None)
+    student = models.ForeignKey(Student, null=True, default=None, on_delete=models.deletion.CASCADE)
 
 class PilotOffering(models.Model):
     sections = models.ManyToManyField(timetable_models.Section)

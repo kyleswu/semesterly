@@ -68,7 +68,7 @@ def courses_to_slots(courses, locked_sections, semester, optional_course_ids):
     for course in courses:
         is_optional = course.id in optional_course_ids
         grouped = get_sections_by_section_type(course, semester)
-        for section_type, sections in grouped.iteritems():
+        for section_type, sections in grouped.items():
             locked_section_code = locked_sections.get(str(course.id), {}).get(section_type)
             section_codes = [section.meeting_section for section in sections]
             if locked_section_code in section_codes:
@@ -89,13 +89,13 @@ def slots_to_timetables(slots, school, custom_events, with_conflicts):
     """ Generate timetables in a depth-first manner based on a list of slots. """
     num_offerings, num_permutations_remaining = get_xproduct_indicies(slots)
     total_num_permutations = num_permutations_remaining.pop(0)
-    for p in xrange(total_num_permutations):  # for each possible tt
+    for p in range(total_num_permutations):  # for each possible tt
         current_tt = []
         day_to_usage = get_day_to_usage(custom_events, school)
         num_conflicts = 0
         add_tt = True
-        for i in xrange(len(slots)):  # add an offering for the next section
-            j = (p / num_permutations_remaining[i]) % num_offerings[i]
+        for i in range(len(slots)):  # add an offering for the next section
+            j = int((p / num_permutations_remaining[i]) % num_offerings[i])
             num_added_conflicts = add_meeting_and_check_conflict(day_to_usage,
                                                                  slots[i][j],
                                                                  school)
@@ -133,7 +133,7 @@ def get_xproduct_indicies(lists):
     """
     num_offerings = []
     num_permutations_remaining = [1]
-    for i in xrange(len(lists) - 1, -1, -1):
+    for i in range(len(lists) - 1, -1, -1):
         length = len(lists[i])
         num_offerings.insert(0, length)
         num_permutations_remaining.insert(0, length * num_permutations_remaining[0])
@@ -167,6 +167,10 @@ def add_meeting_and_check_conflict(day_to_usage, new_meeting, school):
                     potential_conflict_found = offering.has_potential_conflict
                 else:
                     for existing_offering in day_to_usage[day][slot]:
+                        # TODO: Check for conflicts against custom slots
+                        # I tried setting it to true, but it blew up the tt.
+                        if existing_offering == 'custom_slot':
+                            break
                         potential_conflict_found = can_potentially_conflict(
                             existing_offering.date_start,
                             existing_offering.date_end,
@@ -227,8 +231,8 @@ def find_slots_to_fill(start, end, school):
     start_hour, start_minute = get_hours_minutes(start)
     end_hour, end_minute = get_hours_minutes(end)
 
-    return range(get_time_index(start_hour, start_minute, school),
-                 get_time_index(end_hour, end_minute, school))
+    return list(range(int(get_time_index(start_hour, start_minute, school)),
+                int(get_time_index(end_hour, end_minute, school))))
 
 
 def get_time_index(hours, minutes, school):
@@ -270,7 +274,9 @@ def get_tt_stats(timetable, day_to_usage):
 def get_day_to_usage(custom_events, school):
     """Initialize day_to_usage dictionary, which has custom events blocked out."""
     day_to_usage = {
-        day: [set() for _ in range(14 * 60 / SCHOOLS_MAP[school].granularity)]
+        # This really should be 24 * 60, but for some reason the timetable is
+        # capped at starting at 8am, so 8am-12am is 16 hours.
+        day: [set() for _ in range(int(16 * 60 / SCHOOLS_MAP[school].granularity))]
         for day in ['M', 'T', 'W', 'R', 'F']
     }
 
@@ -289,7 +295,7 @@ def get_current_semesters(school):
     (semester name, year) pairs.
     """
     semesters = []
-    for year, terms in reversed(SCHOOLS_MAP[school].active_semesters.items()):
+    for year, terms in reversed(list(SCHOOLS_MAP[school].active_semesters.items())):
         for term in terms:
             # Ensure DB has all semesters.
             Semester.objects.update_or_create(name=term, year=year)
