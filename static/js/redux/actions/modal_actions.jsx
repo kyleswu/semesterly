@@ -90,6 +90,8 @@ export const react = (cid, title) => (dispatch) => {
 
 export const togglePreferenceModal = () => ({ type: ActionTypes.TOGGLE_PREFERENCE_MODAL });
 
+export const toggleRecommendationModal = () => ({ type: ActionTypes.TOGGLE_RECOMMENDATION_MODAL });
+
 export const triggerSaveCalendarModal = () => ({ type: ActionTypes.TRIGGER_SAVE_CALENDAR_MODAL });
 
 export const toggleSaveCalendarModal = () => ({ type: ActionTypes.TOGGLE_SAVE_CALENDAR_MODAL });

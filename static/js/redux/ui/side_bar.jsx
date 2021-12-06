@@ -191,6 +191,14 @@ class SideBar extends React.Component {
           {masterSlots}
           {finalScheduleLink}
         </div>
+        <a onClick={this.props.launchRecommendationModal}>
+          <h4 className="sb-header">
+            Recommended Courses
+            <div className="sb-header-link">
+              See more
+            </div>
+          </h4>
+        </a>
         {optionalSlotsHeader}
         {optionalSlots}
         <div id="sb-optional-slots" />
@@ -225,6 +233,7 @@ SideBar.propTypes = {
   launchFinalExamsModal: PropTypes.func.isRequired,
   removeOptionalCourse: PropTypes.func.isRequired,
   launchPeerModal: PropTypes.func.isRequired,
+  launchRecommendationModal: PropTypes.func.isRequired,
   semester: PropTypes.shape({
     name: PropTypes.string.isRequired,
     year: PropTypes.numberisRequired,

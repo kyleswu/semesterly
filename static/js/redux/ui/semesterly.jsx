@@ -38,6 +38,7 @@ import TermsOfServiceModalContainer from './containers/terms_of_service_modal_co
 import TermsOfServiceBannerContainer from './containers/terms_of_service_banner_container';
 import TextbookModalContainer from './containers/modals/textbook_modal_container';
 import UserSettingsModal from './modals/user_settings_modal';
+import RecommendationModalContainer from './containers/modals/recommendation_modal_container';
 
 
 class Semesterly extends React.Component {
@@ -178,6 +179,7 @@ class Semesterly extends React.Component {
         <TermsOfServiceModalContainer />
         <TermsOfServiceBannerContainer />
         <TextbookModalContainer />
+        <RecommendationModalContainer />
         <AlertBox ref={(a) => { this.msg = a; }} {...this.alertOptions} />
         <div className="all-cols">
           <div className="main-bar">
